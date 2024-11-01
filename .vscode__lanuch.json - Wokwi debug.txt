@@ -1,0 +1,10 @@
+{
+    "name": "Wokwi GDB",
+    "type": "cppdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/.pio/build/esp32/firmware.elf",
+    "cwd": "${workspaceFolder}",
+    "MIMode": "gdb",
+    "miDebuggerPath": "${userHome}/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gdb.exe",
+    "miDebuggerServerAddress": "localhost:3333"
+},
