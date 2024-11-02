@@ -1,3 +1,5 @@
+Copy the following config object to 'configurations' array in file '.vscode/launch.json', after PlatformIO auto generates launch.json
+
 {
     "name": "Wokwi GDB",
     "type": "cppdbg",
@@ -8,3 +10,5 @@
     "miDebuggerPath": "${userHome}/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gdb.exe",
     "miDebuggerServerAddress": "localhost:3333"
 },
+
+Reference: https://docs.wokwi.com/vscode/debugging
