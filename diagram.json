@@ -35,7 +35,7 @@
     {
       "type": "wokwi-resistor",
       "id": "r1",
-      "top": 43.2,
+      "top": 52.8,
       "left": 85.85,
       "rotate": 90,
       "attrs": { "value": "1000" }
@@ -43,7 +43,7 @@
     {
       "type": "wokwi-resistor",
       "id": "r2",
-      "top": 43.2,
+      "top": 52.8,
       "left": 277.85,
       "rotate": 90,
       "attrs": { "value": "1000" }
@@ -51,7 +51,7 @@
     {
       "type": "wokwi-resistor",
       "id": "r3",
-      "top": 43.2,
+      "top": 52.8,
       "left": 258.65,
       "rotate": 90,
       "attrs": { "value": "1000" }
@@ -81,7 +81,7 @@
     {
       "type": "wokwi-resistor",
       "id": "r5",
-      "top": 62.4,
+      "top": 52.8,
       "left": 124.25,
       "rotate": 90,
       "attrs": { "value": "1000" }
@@ -89,7 +89,7 @@
     {
       "type": "wokwi-resistor",
       "id": "r6",
-      "top": 43.2,
+      "top": 52.8,
       "left": 297.05,
       "rotate": 90,
       "attrs": { "value": "1000" }
