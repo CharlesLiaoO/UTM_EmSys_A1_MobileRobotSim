@@ -144,45 +144,45 @@ void calculateOdometry() {
 void speedCtrl() {
   // int vert = (analogRead(Joystick_Vert_Pin));
   // int horz = (analogRead(Joystick_Horz_Pin));
-  int vert = map(analogRead(joystick_Vert_Pin), 0, 4095, -100, 100);
-  int horz = map(analogRead(joystick_Horz_Pin), 0, 4095, -100, 100);
+  int vert = map(analogRead(joystick_Vert_Pin), 0, 4095, -255, 255);  // map to foreward speed
+  int horz = map(analogRead(joystick_Horz_Pin), 0, 4095, -125, 125);  // map to rotate speed, not turn speed
+  // Serial.println("V=%d, H=%d", vert, horz);  // no printf()
   // Serial.print(vert);
   // Serial.print(" -- ");
   // Serial.println(horz);
 
-  // Serial.println("V=%d, H=%d", vert, horz);
   if (horz == 0) {
     if (vert > 0) {
-      setMotorSpeed(1, 1, 255);
-      setMotorSpeed(2, 1, 255);
+      setMotorSpeed(1, 1, vert);
+      setMotorSpeed(2, 1, vert);
     } else if (vert == 0) {
       setMotorSpeed(1, 1, 0);
       setMotorSpeed(2, 1, 0);
     } else {
-      setMotorSpeed(1, 0, 255);
-      setMotorSpeed(2, 0, 255);
+      setMotorSpeed(1, 0, abs(vert));
+      setMotorSpeed(2, 0, abs(vert));
     }
   } else if (horz > 0) {    // left
     if (vert > 0) {
-      setMotorSpeed(1, 1, 125);
-      setMotorSpeed(2, 1, 255);
+      setMotorSpeed(1, 1, vert/2);  // use different foreward speed on two wheel to make sure for turn
+      setMotorSpeed(2, 1, vert);
     } else if (vert == 0) {
-      setMotorSpeed(1, 0, 125);
-      setMotorSpeed(2, 1, 125);
+      setMotorSpeed(1, 0, horz);  // use rotate speed
+      setMotorSpeed(2, 1, horz);
     } else {
-      setMotorSpeed(1, 0, 125);
-      setMotorSpeed(2, 0, 255);
+      setMotorSpeed(1, 0, abs(vert/2));
+      setMotorSpeed(2, 0, abs(vert));
     }
   } else {    // horz < 0    // right
     if (vert > 0) {
       setMotorSpeed(1, 1, 255);
       setMotorSpeed(2, 1, 125);
     } else if (vert == 0) {
-      setMotorSpeed(1, 1, 125);
-      setMotorSpeed(2, 0, 125);
+      setMotorSpeed(1, 1, abs(horz));
+      setMotorSpeed(2, 0, abs(horz));
     } else {
-      setMotorSpeed(1, 0, 255);
-      setMotorSpeed(2, 0, 125);
+      setMotorSpeed(1, 0, abs(vert));
+      setMotorSpeed(2, 0, abs(vert/2));
     }
   }
 }
