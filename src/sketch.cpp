@@ -30,7 +30,6 @@ const int encoder_slots = 20;     // Number of slots in encoder disk
 const float wheelDiameter = 0.020;      // Wheel diameter in meter
 const float wheelBase = 0.15;           // Distance between wheels in meter
 
-
 float linearVelocity = 0;
 float angularVelocity = 0;
 float linearVelocity_b = 0;
@@ -56,47 +55,46 @@ void IRAM_ATTR encoder2_ISR() {
 }
 
 // Function to set motor direction and speed
-void setMotorSpeed(int motor, int direction, int speed) {
-  float simEncode = 10 * speed / 255;
-  float simSpeed = speed == 255 ? 255 : speed * 0.1;
+void setMotorSpeed(int motor, float speed) {
+  float pwmSpeed = abs(speed);
+  float simEncode = 10 * pwmSpeed / 255;
+  float simLedSpeed = pwmSpeed == 255 ? 255 : pwmSpeed * 0.1;
 
   if (motor == 1) { // Motor 1
     if (speed == 0) {
       digitalWrite(motor1_In1, LOW);
       digitalWrite(motor1_In2, LOW);
-    } else {
-      digitalWrite(motor1_In1, direction == 1 ? HIGH : LOW);
-      digitalWrite(motor1_In2, direction == 1 ? LOW : HIGH);
-    }
-
-    // 20241101: using ledc* API needs other dependences in Vscode-Wokwi-PlatformIO environment
-    // https://github.com/espressif/arduino-esp32/issues/9169#issuecomment-2013294488
-    // ledcWrite(motor1_PWM, speed);
-    analogWrite(motor1_PWM, simSpeed);
-
-    if (direction)
+    } else if (speed > 0) {
+      digitalWrite(motor1_In1, HIGH);
+      digitalWrite(motor1_In2, LOW);
       encoder1_Count += simEncode;
-    else
+    } else {
+      digitalWrite(motor1_In1, LOW);
+      digitalWrite(motor1_In2, HIGH);
       encoder1_Count -= simEncode;
+    }
+    // ledcWrite(motor1_PWM, simLedSpeed);
+    analogWrite(motor1_PWM, simLedSpeed);
+
   } else if (motor == 2) { // Motor 2
     if (speed == 0) {
       digitalWrite(motor2_In1, LOW);
       digitalWrite(motor2_In2, LOW);
-    } else {
-      digitalWrite(motor2_In1, direction == 1 ? HIGH : LOW);
-      digitalWrite(motor2_In2, direction == 1 ? LOW : HIGH);
-    }
-    // ledcWrite(motor2_PWM, speed);
-    analogWrite(motor2_PWM, simSpeed);
-
-    if (direction)
+    } else if (speed > 0) {
+      digitalWrite(motor2_In1, HIGH);
+      digitalWrite(motor2_In2, LOW);
       encoder2_Count += simEncode;
-    else
+    } else {
+      digitalWrite(motor2_In1, LOW);
+      digitalWrite(motor2_In2, HIGH);
       encoder2_Count -= simEncode;
+    }
+    // ledcWrite(motor2_PWM, simLedSpeed);
+    analogWrite(motor2_PWM, simLedSpeed);
   }
 }
 
-// Function to calculate speed, position, and heading
+// Function to calculate speed and position
 void calculateOdometry() {
   // Calculate time elapsed
   unsigned long currentTime = millis();
@@ -141,7 +139,7 @@ void calculateOdometry() {
   Serial.println(str);
 }
 
-void speedCtrl() {
+void ctrlSpeed() {
   // int vert = (analogRead(Joystick_Vert_Pin));
   // int horz = (analogRead(Joystick_Horz_Pin));
   int vert = map(analogRead(joystick_Vert_Pin), 0, 4095, -255, 255);  // map to foreward speed
@@ -152,37 +150,23 @@ void speedCtrl() {
   // Serial.println(horz);
 
   if (horz == 0) {
-    if (vert > 0) {
-      setMotorSpeed(1, 1, vert);
-      setMotorSpeed(2, 1, vert);
-    } else if (vert == 0) {
-      setMotorSpeed(1, 1, 0);
-      setMotorSpeed(2, 1, 0);
-    } else {
-      setMotorSpeed(1, 0, abs(vert));
-      setMotorSpeed(2, 0, abs(vert));
-    }
+    setMotorSpeed(1, vert);
+    setMotorSpeed(2, vert);
   } else if (horz > 0) {    // left
-    if (vert > 0) {
-      setMotorSpeed(1, 1, vert/2);  // use different foreward speed on two wheel to make sure for turn
-      setMotorSpeed(2, 1, vert);
-    } else if (vert == 0) {
-      setMotorSpeed(1, 0, horz);  // use rotate speed
-      setMotorSpeed(2, 1, horz);
+    if (vert == 0) {
+      setMotorSpeed(1, -horz);  // use rotate speed
+      setMotorSpeed(2, horz);
     } else {
-      setMotorSpeed(1, 0, abs(vert/2));
-      setMotorSpeed(2, 0, abs(vert));
+      setMotorSpeed(1, vert/2);   // use different vertical speed on two wheel to make sure for turn
+      setMotorSpeed(2, vert);
     }
   } else {    // horz < 0    // right
-    if (vert > 0) {
-      setMotorSpeed(1, 1, 255);
-      setMotorSpeed(2, 1, 125);
-    } else if (vert == 0) {
-      setMotorSpeed(1, 1, abs(horz));
-      setMotorSpeed(2, 0, abs(horz));
+    if (vert == 0) {
+      setMotorSpeed(1, -horz);
+      setMotorSpeed(2, horz);
     } else {
-      setMotorSpeed(1, 0, abs(vert));
-      setMotorSpeed(2, 0, abs(vert/2));
+      setMotorSpeed(1, vert);
+      setMotorSpeed(2, vert/2);
     }
   }
 }
@@ -212,9 +196,8 @@ void setup() {
 };
 
 void loop() {
-  speedCtrl();
+  ctrlSpeed();
 
-  // Calculate odometry for position and heading
   calculateOdometry();
 
   delay(100); // Adjust for desired loop rate
