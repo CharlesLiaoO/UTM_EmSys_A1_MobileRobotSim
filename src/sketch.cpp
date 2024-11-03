@@ -7,11 +7,11 @@ const int joystick_Horz_Pin = 39;
 
 // mcu output pins to motor driver input
 const int motor1_In1 = 19;
-const int motor1_In2 = 18;
-const int motor1_PWM = 5;
-const int motor2_In1 = 17;
-const int motor2_In2 = 16;
-const int motor2_PWM = 4;
+const int motor1_In2 = 5;
+const int motor1_PWM = 18;
+const int motor2_In1 = 4;
+const int motor2_In2 = 17;
+const int motor2_PWM = 16;
 
 // mcu input pins for motor's encoder
 const int encoder1_C = 2;
