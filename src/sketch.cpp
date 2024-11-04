@@ -132,8 +132,8 @@ void calculateOdometry() {
   // Serial.println(str);
 
   Serial.print(deltaTime);  // also for print error (if do not print a num here, the following num will be nan..)
-  Serial.print(" -- ");
-  sprintf(str, "Speed: tran=%.3f, rot=%.3f; Pos: x, y, r=%.3f, %.3f, %.3f", linearVelocity, angularVelocity, posX, posY, heading);
+  Serial.print("s -- ");
+  sprintf(str, "Speed: tran=%.3f, rot=%.3f; Pos: x, y, h=%.3f, %.3f, %.3f", linearVelocity, angularVelocity, posX, posY, heading);
   Serial.println(str);
 }
 
