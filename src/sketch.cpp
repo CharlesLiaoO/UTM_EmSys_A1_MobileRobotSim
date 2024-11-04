@@ -73,7 +73,6 @@ void setMotorSpeed(int motor, float speed) {
       digitalWrite(motor1_In2, HIGH);
       encoder1_Count -= simEncode;
     }
-    // ledcWrite(motor1_PWM, simLedSpeed);
     analogWrite(motor1_PWM, simLedSpeed);
 
   } else if (motor == 2) { // Motor 2
@@ -89,7 +88,6 @@ void setMotorSpeed(int motor, float speed) {
       digitalWrite(motor2_In2, HIGH);
       encoder2_Count -= simEncode;
     }
-    // ledcWrite(motor2_PWM, simLedSpeed);
     analogWrite(motor2_PWM, simLedSpeed);
   }
 }
@@ -188,6 +186,9 @@ void setup() {
   pinMode(encoder2_D, INPUT);
   attachInterrupt(digitalPinToInterrupt(encoder1_C), encoder1_ISR, FALLING);    //RISING
   attachInterrupt(digitalPinToInterrupt(encoder2_C), encoder2_ISR, FALLING);
+
+  // ledcAttachPin(motor1_PWM, ch);  only ok in PlatformIO environment
+  // ledcAttach()  only ok in websit Wokwi
 
   Serial.begin(115200); // For debugging output
   prevTime = millis();    // Initialize time
