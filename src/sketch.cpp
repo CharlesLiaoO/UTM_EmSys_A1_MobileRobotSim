@@ -124,11 +124,12 @@ void calculateOdometry() {
   }
 
   // Update robot's position
-  // Serial.printf(): float can only format with %f, not also with %d! cannot print("\n")!
+  // Serial.printf(): float can only format with %f, not also with %d!
+  // Serial.printf("\n"): "\n" not cross-platform, needs \r\n in windows...
+  // Serial.printf("test newline\r\n");
   double linearVelocity_x = linearVelocity * cos(heading);  // cos/sin() is in radian!
   double linearVelocity_y = linearVelocity * sin(heading);
   // Serial.printf("m1=%f, m2=%f, h=%f, vx=%f, vy=%f", motorSpeed1, motorSpeed2, heading, linearVelocity_x, linearVelocity_y);
-  // Serial.println("");
   posX += linearVelocity_x * deltaTime;
   posY += linearVelocity_y * deltaTime;
 
@@ -138,12 +139,7 @@ void calculateOdometry() {
   double heading_deg = heading * 180/PI;
 
   // Print speed, position
-  char str[1024];
-  memset(str, 0, sizeof str);
-  Serial.print(deltaTime);  // also for print error (if do not print a num here, the following num will be nan..)
-  Serial.print("s -- ");
-  sprintf(str, "Speed: tran=%.3f, rot=%.3f; Pos: x, y, h = %.3f, %.3f, %.3f", linearVelocity, angularVelocity_deg, posX, posY, heading_deg);
-  Serial.println(str);
+  Serial.printf("%.3fs -- Speed: tran=%.3f, rot=%.3f; Pos: x, y, h = %.3f, %.3f, %.3f\r\n", deltaTime, linearVelocity, angularVelocity_deg, posX, posY, heading_deg);
 }
 
 void ctrlSpeed() {
