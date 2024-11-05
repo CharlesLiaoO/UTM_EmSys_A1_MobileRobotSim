@@ -19,7 +19,7 @@ const int encoder1_D = 15;
 const int encoder2_C = 8;
 const int encoder2_D = 7;
 
-// Variables for speed, position, and heading calculations
+// Variables for velocity, position
 int encoder1_Count = 0;
 int encoder2_Count = 0;
 int encoder1_Count_b = 0;
@@ -92,7 +92,7 @@ void setMotorSpeed(int motor, float speed) {
   }
 }
 
-// Function to calculate speed and position
+// Function to calculate velocity and position
 void calculateOdometry() {
   // Calculate time elapsed
   unsigned long currentTime = millis();
@@ -129,7 +129,7 @@ void calculateOdometry() {
   // Serial.printf("test newline\r\n");
   double linearVelocity_x = linearVelocity * cos(heading);  // cos/sin() is in radian!
   double linearVelocity_y = linearVelocity * sin(heading);
-  // Serial.printf("m1=%f, m2=%f, h=%f, vx=%f, vy=%f", motorSpeed1, motorSpeed2, heading, linearVelocity_x, linearVelocity_y);
+  // Serial.printf("m1=%f, m2=%f, h=%f, vx=%f, vy=%f\r\n", motorSpeed1, motorSpeed2, heading, linearVelocity_x, linearVelocity_y);
   posX += linearVelocity_x * deltaTime;
   posY += linearVelocity_y * deltaTime;
 
@@ -139,7 +139,7 @@ void calculateOdometry() {
   double heading_deg = heading * 180/PI;
 
   // Print speed, position
-  Serial.printf("%.3fs -- Speed: tran=%.3f, rot=%.3f; Pos: x, y, h = %.3f, %.3f, %.3f\r\n", deltaTime, linearVelocity, angularVelocity_deg, posX, posY, heading_deg);
+  Serial.printf("%.3fs -- Vel: lin=%.3f, ang=%.3f; Pos: x, y, h = %.3f, %.3f, %.3f\r\n", deltaTime, linearVelocity, angularVelocity_deg, posX, posY, heading_deg);
 }
 
 void ctrlSpeed() {
@@ -147,10 +147,6 @@ void ctrlSpeed() {
   // int horz = (analogRead(Joystick_Horz_Pin));
   int vert = map(analogRead(joystick_Vert_Pin), 0, 4095, -255, 255);  // map to foreward speed
   int horz = map(analogRead(joystick_Horz_Pin), 0, 4095, -125, 125);  // map to rotate speed, not turn speed
-  // Serial.println("V=%d, H=%d", vert, horz);  // no printf()
-  // Serial.print(vert);
-  // Serial.print(" -- ");
-  // Serial.println(horz);
 
   if (horz == 0) {
     setMotorSpeed(1, vert);
