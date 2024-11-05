@@ -30,14 +30,14 @@ const int encoder_slots = 20;     // Number of slots in encoder disk
 const float wheelDiameter = 0.020;      // Wheel diameter in meter
 const float wheelBase = 0.15;           // Distance between wheels in meter
 
-float linearVelocity = 0;
-float angularVelocity = 0;
-float linearVelocity_b = 0;
-float angularVelocity_b = 0;
+double linearVelocity = 0;
+double angularVelocity = 0;
+double linearVelocity_b = 0;
+double angularVelocity_b = 0;
 
-float posX = 0;  // robot's position X in meter
-float posY = 0;
-float heading = 0;  // robot's Heading angle in degree
+double posX = 0;  // robot's position X in meter
+double posY = 0;
+double heading = 90.0 * PI/180;  // robot's Heading angle in radian
 
 // Interrupt service routines for encoder counting
 void IRAM_ATTR encoder1_ISR() {
@@ -99,41 +99,50 @@ void calculateOdometry() {
   float deltaTime = (currentTime - prevTime) / 1000.0; // seconds
   prevTime = currentTime;
 
-  int dt1 = encoder1_Count - encoder1_Count_b;
-  int dt2 = encoder2_Count - encoder2_Count_b;
+  double dt1 = encoder1_Count - encoder1_Count_b;
+  double dt2 = encoder2_Count - encoder2_Count_b;
   encoder1_Count_b = encoder1_Count;
   encoder2_Count_b = encoder2_Count;
 
   // Calculate wheel speeds (m/s)
-  static float distPerCount = (PI * wheelDiameter) / encoder_slots * 0.1;  // 0.5 gear rate
-  float motorSpeed1 = (dt1 * distPerCount * 10) / deltaTime;  // multiply 10 for quick demonstrating
-  float motorSpeed2 = (dt2 * distPerCount * 10) / deltaTime;
+  static double distPerCount = (PI * wheelDiameter) / encoder_slots * 0.1;  // 0.5 gear rate
+  double motorSpeed1 = (dt1 * distPerCount * 10) / deltaTime;  // multiply 10 for quick demonstrating
+  double motorSpeed2 = (dt2 * distPerCount * 10) / deltaTime;
 
   // Calculate linear and angular velocity
   linearVelocity = (motorSpeed1 + motorSpeed2) / 2;
-  angularVelocity = (motorSpeed1 - motorSpeed2) / wheelBase * 180/PI;  // heading angle, right is positive
+  angularVelocity = (motorSpeed2 - motorSpeed1) / wheelBase;
 
   if (linearVelocity_b == linearVelocity && angularVelocity_b == angularVelocity) {
     return;
   }
-
   linearVelocity_b = linearVelocity;
   angularVelocity_b = angularVelocity;
 
-  // Update robot's position and heading
-  heading += angularVelocity * deltaTime;
-  posX += linearVelocity * sin(heading) * deltaTime;
-  posY += linearVelocity * cos(heading) * deltaTime;
+  if (0 == linearVelocity && 0 == angularVelocity) {
+    return;
+  }
 
-  // Print speed, position, and heading for debugging
+  // Update robot's position
+  // Serial.printf(): float can only format with %f, not also with %d! cannot print("\n")!
+  double linearVelocity_x = linearVelocity * cos(heading);  // cos/sin() is in radian!
+  double linearVelocity_y = linearVelocity * sin(heading);
+  // Serial.printf("m1=%f, m2=%f, h=%f, vx=%f, vy=%f", motorSpeed1, motorSpeed2, heading, linearVelocity_x, linearVelocity_y);
+  // Serial.println("");
+  posX += linearVelocity_x * deltaTime;
+  posY += linearVelocity_y * deltaTime;
+
+  heading += angularVelocity * deltaTime;
+
+  double angularVelocity_deg = angularVelocity * 180/PI;
+  double heading_deg = heading * 180/PI;
+
+  // Print speed, position
   char str[1024];
   memset(str, 0, sizeof str);
-  // sprintf(str, "Speed (m/s): Motor1 = %d, Motor2 = %d", motorSpeed1, motorSpeed2);
-  // Serial.println(str);
-
   Serial.print(deltaTime);  // also for print error (if do not print a num here, the following num will be nan..)
   Serial.print("s -- ");
-  sprintf(str, "Speed: tran=%.3f, rot=%.3f; Pos: x, y, h=%.3f, %.3f, %.3f", linearVelocity, angularVelocity, posX, posY, heading);
+  sprintf(str, "Speed: tran=%.3f, rot=%.3f; Pos: x, y, h = %.3f, %.3f, %.3f", linearVelocity, angularVelocity_deg, posX, posY, heading_deg);
   Serial.println(str);
 }
 
