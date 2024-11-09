@@ -40,18 +40,19 @@ double posY = 0;
 double heading = 90.0 * PI/180;  // robot's Heading angle in radian
 
 // Interrupt service routines for encoder counting
+const int encoder_dt = 10;  // use 1 in physical project
 void IRAM_ATTR encoder1_ISR() {
   if (digitalRead(encoder1_D))
-    encoder1_Count++;
+    encoder1_Count = encoder1_Count + encoder_dt;
   else
-    encoder1_Count--;
+    encoder1_Count = encoder1_Count - encoder_dt;
 }
 
 void IRAM_ATTR encoder2_ISR() {
   if (digitalRead(encoder2_D))
-    encoder2_Count++;
+    encoder2_Count = encoder2_Count + encoder_dt;
   else
-    encoder2_Count--;
+    encoder2_Count = encoder2_Count - encoder_dt;
 }
 
 // Function to set motor direction and speed
