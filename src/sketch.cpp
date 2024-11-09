@@ -129,7 +129,8 @@ void calculateOdometry() {
   // Serial.printf("test newline\r\n");
   double linearVelocity_x = linearVelocity * cos(heading);  // cos/sin() is in radian!
   double linearVelocity_y = linearVelocity * sin(heading);
-  // Serial.printf("m1=%f, m2=%f, h=%f, vx=%f, vy=%f\r\n", motorSpeed1, motorSpeed2, heading, linearVelocity_x, linearVelocity_y);
+  double heading_degP = heading * 180/PI;
+  // Serial.printf("m1=%.3f, m2=%.3f, h=%.3f, vx=%.3f, vy=%.3f -- ", motorSpeed1, motorSpeed2, heading_degP, linearVelocity_x, linearVelocity_y);
   posX += linearVelocity_x * deltaTime;
   posY += linearVelocity_y * deltaTime;
 
