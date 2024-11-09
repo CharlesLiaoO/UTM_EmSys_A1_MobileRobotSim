@@ -105,9 +105,9 @@ void calculateOdometry() {
   encoder2_Count_b = encoder2_Count;
 
   // Calculate wheel speeds (m/s)
-  static double distPerCount = (PI * wheelDiameter) / encoder_slots * 0.1;  // 0.5 gear rate
-  double motorSpeed1 = (dt1 * distPerCount * 10) / deltaTime;  // multiply 10 for quick demonstrating
-  double motorSpeed2 = (dt2 * distPerCount * 10) / deltaTime;
+  static double distPerCount = (PI * wheelDiameter) / encoder_slots * 0.1 * 10;  // 0.1 gear rate, multiply 10 for quick demonstrating
+  double motorSpeed1 = (dt1 * distPerCount) / deltaTime;
+  double motorSpeed2 = (dt2 * distPerCount) / deltaTime;
 
   // Calculate linear and angular velocity
   linearVelocity = (motorSpeed1 + motorSpeed2) / 2;
