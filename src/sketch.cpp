@@ -155,7 +155,7 @@ void ctrlSpeed() {
     setMotorSpeed(2, vert);
   } else if (horz > 0) {    // left
     if (vert == 0) {
-      setMotorSpeed(1, -horz);  // use rotate speed
+      setMotorSpeed(1, -horz);  // counter-clockwise: speed1 < 0 and speed2 > 0
       setMotorSpeed(2, horz);
     } else {
       setMotorSpeed(1, vert/2);   // use different vertical speed on two wheel to make sure for turn
@@ -163,7 +163,7 @@ void ctrlSpeed() {
     }
   } else {    // horz < 0    // right
     if (vert == 0) {
-      setMotorSpeed(1, -horz);
+      setMotorSpeed(1, -horz);  // clockwise: speed1 > 0 and speed2 < 0
       setMotorSpeed(2, horz);
     } else {
       setMotorSpeed(1, vert);
